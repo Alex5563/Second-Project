@@ -1,0 +1,33 @@
+.role-options {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.role-option {
+    flex: 1;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+    background-color: white;
+}
+
+.role-option input {
+    display: none;
+}
+
+.role-option span {
+    font-weight: 500;
+}
+
+.role-option:hover {
+    border-color: #0d6efd;
+}
+
+.role-option:has(input:checked) {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
