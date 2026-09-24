@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+{% with profile=template_data.profile %}
+<div class="d-flex justify-content-between align-items-start">
+  <div>
+    <h1>{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+    <p class="lead">{{ profile.headline|default:"No headline yet" }}</p>
+  </div>
+  <div>
+    <a href="{% url 'profiles.edit' %}" class="btn btn-primary">Edit profile</a>
+    <a href="{% url 'profiles.privacy' %}" class="btn btn-outline-secondary">Privacy</a>
+  </div>
+</div>
+
+{% if profile.summary %}<p>{{ profile.summary|linebreaksbr }}</p>{% endif %}
+
+{% if profile.skills.all %}
+  <h4 class="mt-4">Skills</h4>
+  {% for skill in profile.skills.all %}
+    <span class="badge bg-secondary">{{ skill.name }}</span>
+  {% endfor %}
+{% endif %}
+
+{% if profile.experience.all %}
+  <h4 class="mt-4">Work Experience</h4>
+  {% for job in profile.experience.all %}
+    <div class="mb-3">
+      <strong>{{ job.title }}</strong> at {{ job.company }}<br>
+      <small class="text-muted">
+        {{ job.start_date|date:"M Y" }} - {% if job.end_date %}{{ job.end_date|date:"M Y" }}{% else %}Present{% endif %}
+      </small>
+      {% if job.description %}<p>{{ job.description|linebreaksbr }}</p>{% endif %}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if profile.education.all %}
+  <h4 class="mt-4">Education</h4>
+  {% for ed in profile.education.all %}
+    <div class="mb-3">
+      <strong>{{ ed.school }}</strong>{% if ed.degree %}, {{ ed.degree }}{% endif %}{% if ed.field_of_study %} in {{ ed.field_of_study }}{% endif %}<br>
+      <small class="text-muted">{{ ed.start_year|default:"" }} - {{ ed.end_year|default:"" }}</small>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if profile.links.all %}
+  <h4 class="mt-4">Links</h4>
+  <ul>
+    {% for link in profile.links.all %}
+      <li><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a></li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endwith %}
+{% endblock content %}
