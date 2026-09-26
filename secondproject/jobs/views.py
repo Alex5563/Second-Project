@@ -145,3 +145,16 @@ def create(request):
     return render(request, 'jobs/form.html', {
         'template_data': template_data,
     })
+@recruiter_required
+def manage(request):
+    jobs = Job.objects.filter(
+        posted_by=request.user
+    ).order_by('-created_at')
+
+    template_data = {}
+    template_data['title'] = 'My Job Postings'
+    template_data['jobs'] = jobs
+
+    return render(request, 'jobs/manage.html', {
+        'template_data': template_data,
+    })
