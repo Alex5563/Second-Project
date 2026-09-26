@@ -16,3 +16,13 @@ def job_seeker_required(view):
             return redirect('home.index')
         return view(request, *args, **kwargs)
     return wrapper
+
+def recruiter_required(view):
+    """Login required. Job seekers are sent back to the home page."""
+    @login_required
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if not is_recruiter(request.user):
+            return redirect('home.index')
+        return view(request, *args, **kwargs)
+    return wrapper
