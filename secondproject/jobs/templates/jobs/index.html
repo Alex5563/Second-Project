@@ -74,6 +74,16 @@
                 <span class="badge bg-secondary">{{ skill.name }}</span>
               {% endif %}
             {% endfor %}
+            <div class="mt-2">
+              <a href="{% url 'jobs.show' id=job.id %}"
+                class="btn btn-sm bg-dark text-white">View &amp; Apply</a>
+              <form method="POST" action="{% url 'cart.add' id=job.id %}"
+                class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  <i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+              </form>
+            </div>
           </div>
         </div>
       {% endfor %}
@@ -106,6 +116,16 @@
               <span class="badge bg-secondary">{{ skill.name }}</span>
             {% endif %}
           {% endfor %}
+          <div class="mt-2">
+            <a href="{% url 'jobs.show' id=job.id %}"
+              class="btn btn-sm bg-dark text-white">View &amp; Apply</a>
+            <form method="POST" action="{% url 'cart.add' id=job.id %}"
+              class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+            </form>
+          </div>
         </div>
       </div>
     {% endfor %}

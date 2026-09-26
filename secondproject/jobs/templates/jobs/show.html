@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-8 mx-auto mb-3">
+        <h2>{{ template_data.job.title }}</h2>
+        <hr />
+        <p><b>Company:</b> {{ template_data.job.company }}</p>
+        <p><b>Location:</b> {{ template_data.job.location }}</p>
+        <p><b>Salary:</b> ${{ template_data.job.salary_min }} -
+          ${{ template_data.job.salary_max }}</p>
+        <p><b>Workplace:</b>
+          {{ template_data.job.get_workplace_display }}</p>
+        <p><b>Visa sponsorship:</b>
+          {% if template_data.job.visa_sponsorship %}Yes{% else %}No{% endif %}</p>
+        <p><b>Skills:</b>
+          {% for skill in template_data.job.skills.all %}
+          <span class="badge bg-secondary">{{ skill.name }}</span>
+          {% endfor %}
+        </p>
+        <p>{{ template_data.job.description|linebreaksbr }}</p>
+        {% if template_data.in_cart %}
+        <a href="{% url 'cart.index' %}"
+          class="btn btn-outline-secondary">In your cart</a>
+        {% else %}
+        <form method="POST"
+          action="{% url 'cart.add' id=template_data.job.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      <div class="col-md-4 mx-auto mb-3">
+        <div class="card shadow p-3 mb-4 rounded">
+          <div class="card-body">
+            {% if template_data.applications %}
+            {% for application in template_data.applications %}
+            <b class="card-title">You applied</b>
+            <p class="card-subtitle mt-2 text-muted">
+              {{ application.date }}</p>
+            <p class="card-text mt-2">
+              {{ application.note|linebreaksbr }}</p>
+            {% endfor %}
+            {% else %}
+            <b class="card-title">Apply to this job</b>
+            <form method="POST"
+              action="{% url 'jobs.apply' id=template_data.job.id %}">
+              {% csrf_token %}
+              <p class="mt-2">
+                <label for="note">Note to the recruiter:</label>
+                <textarea name="note" rows="5"
+                class="form-control" id="note"></textarea>
+              </p>
+              <div class="text-center">
+                <button type="submit" class="btn bg-dark text-white">
+                  Apply
+                </button>
+              </div>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

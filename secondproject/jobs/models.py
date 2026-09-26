@@ -26,3 +26,13 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+class Application(models.Model):
+    id = models.AutoField(primary_key=True)
+    note = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    job = models.ForeignKey(Job,
+        on_delete=models.CASCADE)
+    user = models.ForeignKey(User,
+        on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.id) + ' - ' + self.job.title

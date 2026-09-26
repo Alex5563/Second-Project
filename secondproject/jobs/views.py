@@ -88,3 +88,38 @@ def index(request):
         'visa': visa,
     }
     return render(request, 'jobs/index.html', {'template_data': template_data})
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from accounts.permissions import is_recruiter
+from .models import Application
+@login_required
+def show(request, id):
+    if is_recruiter(request.user):
+        return redirect('home.index')
+    job = Job.objects.get(id=id)
+    applications = Application.objects.filter(job=job,
+        user=request.user)
+    cart = request.session.get('cart', [])
+    template_data = {}
+    template_data['title'] = job.title
+    template_data['job'] = job
+    template_data['applications'] = applications
+    template_data['in_cart'] = id in cart
+    return render(request, 'jobs/show.html',
+                  {'template_data': template_data})
+@login_required
+def apply(request, id):
+    if is_recruiter(request.user):
+        return redirect('home.index')
+    job = Job.objects.get(id=id)
+    applications = Application.objects.filter(job=job,
+        user=request.user)
+    if request.method == 'POST' and len(applications) == 0:
+        application = Application()
+        application.note = request.POST['note']
+        application.job = job
+        application.user = request.user
+        application.save()
+        return redirect('jobs.show', id=id)
+    else:
+        return redirect('jobs.show', id=id)

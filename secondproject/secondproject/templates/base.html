@@ -32,6 +32,8 @@
             {% if user.role.role != 'recruiter' %}
             <a class="btn btn-outline-light btn-sm me-2" href="{% url 'jobs.index' %}">Jobs</a>
             <a class="btn btn-outline-light btn-sm me-2" href="{% url 'profiles.index' %}">My Profile</a>
+            <a class="btn btn-outline-light btn-sm me-2" href="{% url 'cart.index' %}">
+              <i class="fas fa-shopping-cart me-1"></i>Cart</a>
             {% endif %}
             <a class="btn btn-outline-light btn-sm" href="{% url 'accounts.logout' %}">Log out</a>
           {% else %}
