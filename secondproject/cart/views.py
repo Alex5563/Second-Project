@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404, redirect
+from jobs.models import Job, Application
+from accounts.permissions import is_recruiter, job_seeker_required
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-from django.shortcuts import get_object_or_404, redirect
-from jobs.models import Job, Application
-from accounts.permissions import is_recruiter
-from django.contrib.auth.decorators import login_required
+@job_seeker_required
 @login_required
 def index(request):
     if is_recruiter(request.user):
@@ -26,6 +27,7 @@ def index(request):
     template_data['applied_ids'] = applied_ids
     return render(request, 'cart/index.html',
         {'template_data': template_data})
+@job_seeker_required
 @require_POST
 @login_required
 def add(request, id):
@@ -35,6 +37,7 @@ def add(request, id):
         cart.append(id)
     request.session['cart'] = cart
     return redirect('cart.index')
+@job_seeker_required
 @require_POST
 @login_required
 def remove(request, id):
@@ -43,6 +46,7 @@ def remove(request, id):
         cart.remove(id)
     request.session['cart'] = cart
     return redirect('cart.index')
+@job_seeker_required
 @require_POST
 @login_required
 def clear(request):
