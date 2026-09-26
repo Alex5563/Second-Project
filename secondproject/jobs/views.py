@@ -1,8 +1,9 @@
 from django.db.models import Count, Q
 from django.shortcuts import render
-from accounts.permissions import job_seeker_required
+from accounts.permissions import job_seeker_required, recruiter_required
 from profiles.models import Profile
 from .models import Job
+from .forms import JobForm
 
 
 def _parse_int(value):
@@ -123,3 +124,24 @@ def apply(request, id):
         return redirect('jobs.show', id=id)
     else:
         return redirect('jobs.show', id=id)
+@recruiter_required
+def create(request):
+    if request.method == 'POST':
+        form = JobForm(request.POST)
+
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.posted_by = request.user
+            job.save()
+            form.save_m2m()
+            return redirect('jobs.manage')
+    else:
+        form = JobForm()
+
+    template_data = {}
+    template_data['title'] = 'Post a Job'
+    template_data['form'] = form
+
+    return render(request, 'jobs/form.html', {
+        'template_data': template_data,
+    })
