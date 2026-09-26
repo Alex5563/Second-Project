@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+{% with filters=template_data.filters %}
+<h1>Jobs</h1>
+
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title" name="title" value="{{ filters.title }}">
+  </div>
+  <div class="col-md-4">
+    <label for="skills" class="form-label">Skills</label>
+    <input type="text" class="form-control" id="skills" name="skills"
+           value="{{ filters.skills }}" placeholder="Comma-separated, e.g. Python, Django">
+  </div>
+  <div class="col-md-4">
+    <label for="location" class="form-label">Location</label>
+    <input type="text" class="form-control" id="location" name="location" value="{{ filters.location }}">
+  </div>
+  <div class="col-md-3">
+    <label for="salary_min" class="form-label">Min salary</label>
+    <input type="number" class="form-control" id="salary_min" name="salary_min" value="{{ filters.salary_min }}">
+  </div>
+  <div class="col-md-3">
+    <label for="salary_max" class="form-label">Max salary</label>
+    <input type="number" class="form-control" id="salary_max" name="salary_max" value="{{ filters.salary_max }}">
+  </div>
+  <div class="col-md-3">
+    <label for="workplace" class="form-label">Workplace</label>
+    <select class="form-select" id="workplace" name="workplace">
+      <option value="">Any</option>
+      <option value="remote" {% if filters.workplace == 'remote' %}selected{% endif %}>Remote</option>
+      <option value="onsite" {% if filters.workplace == 'onsite' %}selected{% endif %}>On-site</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label for="visa" class="form-label">Visa sponsorship</label>
+    <select class="form-select" id="visa" name="visa">
+      <option value="">Any</option>
+      <option value="yes" {% if filters.visa == 'yes' %}selected{% endif %}>Yes</option>
+      <option value="no" {% if filters.visa == 'no' %}selected{% endif %}>No</option>
+    </select>
+  </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a href="{% url 'jobs.index' %}" class="btn btn-outline-secondary">Clear</a>
+  </div>
+</form>
+
+{% if not template_data.has_filters %}
+  <h2 class="h4 mt-4">Recommended for you</h2>
+  {% if not template_data.has_skills %}
+    <p class="text-muted">
+      Add skills to your profile to get job recommendations.
+      <a href="{% url 'profiles.edit' %}">Edit profile</a>
+    </p>
+  {% elif template_data.recommended %}
+    <div class="row">
+      {% for job in template_data.recommended %}
+        <div class="col-md-6 mb-3">
+          <div class="border rounded p-3 h-100">
+            <h3 class="h5 mb-1">{{ job.title }}</h3>
+            <p class="mb-1 text-muted">{{ job.company }} &middot; {{ job.location }}</p>
+            <p class="mb-1">
+              ${{ job.salary_min }} – ${{ job.salary_max }}
+              &middot; {{ job.get_workplace_display }}
+              &middot; Visa: {% if job.visa_sponsorship %}Yes{% else %}No{% endif %}
+            </p>
+            <p class="mb-2 small text-success">{{ job.match_count }} of your skills</p>
+            {% for skill in job.skills.all %}
+              {% if skill.id in template_data.profile_skill_ids %}
+                <span class="badge bg-primary">{{ skill.name }}</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ skill.name }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No matching recommendations yet.</p>
+  {% endif %}
+
+  <h2 class="h4 mt-4">All jobs</h2>
+{% else %}
+  <h2 class="h4 mt-4">Search results</h2>
+{% endif %}
+
+{% if template_data.jobs %}
+  <div class="row">
+    {% for job in template_data.jobs %}
+      <div class="col-md-6 mb-3">
+        <div class="border rounded p-3 h-100">
+          <h3 class="h5 mb-1">{{ job.title }}</h3>
+          <p class="mb-1 text-muted">{{ job.company }} &middot; {{ job.location }}</p>
+          <p class="mb-1">
+            ${{ job.salary_min }} – ${{ job.salary_max }}
+            &middot; {{ job.get_workplace_display }}
+            &middot; Visa: {% if job.visa_sponsorship %}Yes{% else %}No{% endif %}
+          </p>
+          {% for skill in job.skills.all %}
+            {% if skill.id in template_data.profile_skill_ids %}
+              <span class="badge bg-primary">{{ skill.name }}</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ skill.name }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No jobs found.</p>
+{% endif %}
+{% endwith %}
+{% endblock content %}

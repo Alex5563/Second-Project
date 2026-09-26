@@ -29,10 +29,11 @@
          <div class="ms-auto">
           {% if user.is_authenticated %}
             <span class="navbar-text me-3">Hi, {{ user.username }}</span>
-            <a class="btn btn-outline-light btn-sm" href="{% url 'accounts.logout' %}">Log out</a>
             {% if user.role.role != 'recruiter' %}
+            <a class="btn btn-outline-light btn-sm me-2" href="{% url 'jobs.index' %}">Jobs</a>
             <a class="btn btn-outline-light btn-sm me-2" href="{% url 'profiles.index' %}">My Profile</a>
             {% endif %}
+            <a class="btn btn-outline-light btn-sm" href="{% url 'accounts.logout' %}">Log out</a>
           {% else %}
             <a class="btn btn-outline-light btn-sm me-2" href="{% url 'accounts.login' %}">Log in</a>
             <a class="btn btn-light btn-sm" href="{% url 'accounts.signup' %}">Sign up</a>
