@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -25,6 +26,7 @@ def index(request):
     template_data['applied_ids'] = applied_ids
     return render(request, 'cart/index.html',
         {'template_data': template_data})
+@require_POST
 @login_required
 def add(request, id):
     get_object_or_404(Job, id=id)
@@ -33,6 +35,7 @@ def add(request, id):
         cart.append(id)
     request.session['cart'] = cart
     return redirect('cart.index')
+@require_POST
 @login_required
 def remove(request, id):
     cart = request.session.get('cart', [])
@@ -40,6 +43,7 @@ def remove(request, id):
         cart.remove(id)
     request.session['cart'] = cart
     return redirect('cart.index')
+@require_POST
 @login_required
 def clear(request):
     request.session['cart'] = []
