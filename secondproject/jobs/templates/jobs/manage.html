@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Job Postings</h1>
+
+<a href="{% url 'jobs.create' %}" class="btn btn-primary mb-3">
+  Post a Job
+</a>
+
+{% if template_data.jobs %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Company</th>
+        <th>Location</th>
+        <th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in template_data.jobs %}
+        <tr>
+          <td>{{ job.title }}</td>
+          <td>{{ job.company }}</td>
+          <td>{{ job.location }}</td>
+          <td>${{ job.salary_min }} - ${{ job.salary_max }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>You haven't posted any jobs yet.</p>
+{% endif %}
+{% endblock %}
